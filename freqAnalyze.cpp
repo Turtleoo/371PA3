@@ -15,7 +15,7 @@ using namespace std;
  */
 bool charCheck(char ch)
 {
-  return ch == ' ' || ch == ',' || ch == '\'' || ch == '.' || ch == ';';
+  return ch < 97 || ch > 172;
 }
 
 /*
