@@ -4,6 +4,9 @@
 #include <string>
 #include <vector>
 #include <algorithm>
+#include <fstream>
+#include <sstream>
+#include <string>
 
 using namespace std;
 
@@ -120,11 +123,31 @@ map<string, int> threeGram(string userString)
   return threeGramMap;
 };
 
-int main()
+int main(int argc, char* argv[])
 {
 
-  // the given string from supporting PA3 docs
-  string test = "bt jpx rmlx pcuv amlx icvjp ibtwxvr ci m lmt'r pmtn, mtn yvcjx cdxv mwmbtrj jpx amtngxrjbah uqct jpx qgmrjxv ci jpx ymgg ci jpx hbtw'r qmgmax; mtn jpx hbtw rmy jpx qmvj ci jpx pmtn jpmj yvcjx. jpxt jpx hbtw'r acutjxtmtax ymr apmtwxn, mtn pbr jpcuwpjr jvcufgxn pbl, rc jpmj jpx scbtjr ci pbr gcbtr yxvx gccrxn, mtn pbr htxxr rlcjx ctx mwmbtrj mtcjpxv. jpx hbtw avbxn mgcun jc fvbtw bt jpx mrjvcgcwxvr, jpx apmgnxmtr, mtn jpx rccjprmexvr. mtn jpx hbtw rqmhx, mtn rmbn jc jpx ybrx lxt ci fmfegct, ypcrcxdxv rpmgg vxmn jpbr yvbjbtw, mtn rpcy lx jpx btjxvqvxjmjbct jpxvxci, rpmgg fx agcjpxn ybjp ramvgxj, mtn pmdx m apmbt ci wcgn mfcuj pbr txah, mtn rpmgg fx jpx jpbvn vugxv bt jpx hbtwncl. jpxt amlx bt mgg jpx hbtw'r ybrx lxt; fuj jpxe acugn tcj vxmn jpx yvbjbtw, tcv lmhx htcyt jc jpx hbtw jpx btjxvqvxjmjbct jpxvxci. jpxt ymr hbtw fxgrpmoomv wvxmjge jvcufgxn, mtn pbr acutjxtmtax ymr apmtwxn bt pbl, mtn pbr gcvnr yxvx mrjctbrpxn. tcy jpx kuxxt, fe vxmrct ci jpx ycvnr ci jpx hbtw mtn pbr gcvnr, amlx btjc jpx fmtkuxj pcurx; mtn jpx kuxxt rqmhx mtn rmbn, c hbtw, gbdx icvxdxv; gxj tcj jpe jpcuwpjr jvcufgx jpxx, tcv gxj jpe acutjxtmtax fx apmtwxn; jpxvx br m lmt bt jpe hbtwncl, bt ypcl br jpx rqbvbj ci jpx pcge wcnr; mtn bt jpx nmer ci jpe ybrncl ci jpx wcnr, ymr icutn bt pbl; ypcl jpx hbtw txfuapmntxoomv jpe imjpxv, jpx hbtw, b rme, jpe imjpxv, lmnx lmrjxv ci jpx lmwbabmtr, mrjvcgcwxvr, apmgnxmtr, mtn rccjprmexvr; icvmrluap mr mt xzaxggxtj rqbvbj, mtn htcygxnwx, mtn utnxvrjmtnbtw, btjxvqvxjbtw ci nvxmlr, mtn rpcybtw ci pmvn rxtjxtaxr, mtn nbrrcgdbtw ci ncufjr, yxvx icutn bt jpx rmlx nmtbxg, ypcl jpx hbtw tmlxn fxgjxrpmoomv; tcy gxj nmtbxg fx amggxn, mtn px ybgg rpcy jpx btjxvqvxjmjbct.";
+      // Check if a filename is provided
+    if (argc < 2) {
+        cerr << "Usage: " << argv[0] << " <filename>" << endl;
+        return 1;
+    }
+
+    // Open the file using the filename provided in the command line
+    ifstream file(argv[1]);
+    if (!file.is_open()) {
+        cerr << "Failed to open file: " << argv[1] << endl;
+        return 1;
+    }
+
+    // Read the file into a stringstream
+    stringstream buffer;
+    buffer << file.rdbuf();
+    
+    // Close the file
+    file.close();
+
+    // Convert the stringstream to a string
+    string test = buffer.str();
 
   // Converts string to lowercase (counting grams is not case sensitive)
   for (auto iter = test.begin(); iter != test.end(); iter++)
@@ -132,16 +155,23 @@ int main()
     *iter = tolower(*iter);
   }
 
-  cout << "PRINTING ONE GRAMS!" << endl << endl;
+    cout << endl;
+    cout << "PRINTING ONE GRAMS!" << endl << endl;
 
-  // Establish one gram map
-  map<char, int> oneGramMap = oneGram(test);
+    map<char, int> oneGramMap = oneGram(test);
 
-  // Prints out Key/Value pairs for one gram
-  for (auto iter = oneGramMap.begin(); iter != oneGramMap.end(); iter++)
-  {
-    cout << iter->first << ":" << iter->second << endl;
-  }
+    // Create a vector and copy elements from the map
+    vector<pair<char, int>> oneGramVec(oneGramMap.begin(), oneGramMap.end());
+
+    // Sort the vector by the second element of the pair (value) in descending order
+    sort(oneGramVec.begin(), oneGramVec.end(), [](const pair<char, int> &a, const pair<char, int> &b) {
+        return a.second > b.second;
+    });
+
+    // Print all elements (or modify to print top N elements similar to the two gram example)
+    for (auto &[key, value] : oneGramVec) {
+        cout << key << ": " << value << endl;
+    }
 
   // used to count the top 10 numbers of the bi-grams and tri-grams
   int count = 0;
