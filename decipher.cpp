@@ -56,5 +56,10 @@ int main(int argc, char* argv[]) {
     cout << "\nDeciphered Text:" << endl;
     cout << decipher(cipher_text, manual_mapping) << endl;
 
+    cout << "Code Mapping" << endl;
+    cout << "Left - Cipher" << ""
+    for (const auto &pair : manual_mapping) {
+        cout << "{" << pair.first << ", " << pair.second << "}," << endl;
+    }
     return 0;
 }
